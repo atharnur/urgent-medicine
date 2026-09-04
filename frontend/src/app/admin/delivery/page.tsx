@@ -1,0 +1,6 @@
+"use client";
+import {useEffect,useState} from "react";
+import {api} from "../../../lib/api";
+export default function AdminDelivery(){const[data,setData]=useState<any[]>([]);const[agents,setAgents]=useState<any[]>([]);const[error,setError]=useState("");const load=()=>Promise.all([api<any>("/delivery/admin"),api<any>("/delivery/admin/agents")]).then(([d,a])=>{setData(d.data);setAgents(a.data)}).catch(e=>setError(e.message));useEffect(()=>{load()},[]);
+ async function assign(id:string,agentId:string){if(!agentId)return;try{await api(`/delivery/admin/${id}/assign`,{method:"POST",body:JSON.stringify({agentId})});await load()}catch(e:any){setError(e.message)}}
+ return <main className="container"><div className="card"><h1>Delivery Operations</h1>{error&&<p className="error">{error}</p>}{data.map(d=><div className="card" key={d.id}><b>{d.trackingNumber}</b><p>{d.deliveryName} — {d.deliveryCity}</p><p>Status: {d.status}</p><select className="input" value={d.assignedAgentId||""} onChange={e=>assign(d.id,e.target.value)}><option value="">Assign delivery agent</option>{agents.filter(a=>a.status==="ACTIVE").map(a=><option key={a.id} value={a.id}>{a.name} — {a.phone}</option>)}</select></div>)}</div></main>}

@@ -1,0 +1,9 @@
+node_modules
+.next
+dist
+.env
+.env.*
+.git
+.gitignore
+storage/private
+npm-debug.log*
